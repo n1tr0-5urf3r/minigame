@@ -11,6 +11,7 @@ public class Enemy extends JButton {
     public int health;
     private final int width = 40;
     private final int height = 40;
+    private double PosY = this.getPositiony();
 
     public Enemy() {
         super();
@@ -30,15 +31,25 @@ public class Enemy extends JButton {
     public int getHealth() {
         return this.health;
     }
-    
+
     public int getPositionx() {
         int current_x = this.getX();
         return current_x;
     }
-    
-        public int getPositiony() {
+
+    public int getPositiony() {
         int current_y = this.getY();
         return current_y;
     }
-    
+
+    public void moveBot() {
+        PosY = PosY + 0.000001;
+        this.setLocation(this.getPositionx(), (int) PosY);
+    }
+
+    public void moveTop() {
+        PosY = PosY - 0.000001;
+        this.setLocation(this.getPositionx(), (int) PosY);
+    }
+
 }

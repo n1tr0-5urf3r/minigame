@@ -5,7 +5,10 @@
  */
 package de.n1tr0.minigame;
 
+import java.awt.Color;
 import java.awt.event.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -42,21 +45,53 @@ public class Main extends javax.swing.JFrame implements ActionListener {
 
         //Test the lasers
         getContentPane().add(laser);
-        laser.setLocation(150, 100);
+        laser.setLocation(player1.getX(), 100);
         laser.setEnabled(false);
 
-        
         //Player1 listens to (Click-)Action
         player1.addActionListener(this);
+
+        //Start enemy movement
+        
+        Thread enemyMove = new Thread() {
+            public void run() {
+                while (true){
+                while (enemy.getPositiony()>0) {
+                    
+                    enemy.moveTop();
+                }
+                
+                while (enemy.getPositiony()<200)    
+                    enemy.moveBot();
+                
+            }
+                }
+        };
+        
+        enemyMove.start();
     }
 
     // Says what happens when an action is performed
     @Override
-    public void actionPerformed(ActionEvent e) {
 
-        laser.moveRight();
-        laser.sprayY();
-        checkHit();
+    public void actionPerformed(ActionEvent e) {
+        Thread moveThread = new Thread() {
+            public void run() {
+                for (int i = 0; i < 25; i++) {
+
+                    laser.moveRight();
+                    laser.sprayY();
+                    checkHit();
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }
+            }
+        };
+        moveThread.start();
 
     }
 
@@ -66,7 +101,7 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         if (laser.getPositionx() >= enemy.getPositionx() && laser.getPositiony() >= enemy.getPositiony()) {
             hit = true;
         }
-        
+
         //Hit on bottom
         if (laser.getPositionx() >= enemy.getPositionx() && laser.getPositiony() <= (enemy.getPositiony() + enemy.getHeight())) {
             hit = true;
@@ -77,12 +112,13 @@ public class Main extends javax.swing.JFrame implements ActionListener {
             System.out.println("Target Missed!");
             hit = false;
             laser.resetPosx();
+            laser.newSprayY();
         }
-        
+
         //Missed bottom
         if (laser.getPositionx() >= enemy.getPositionx() && laser.getPositiony() > (enemy.getPositiony() + enemy.getHeight())) {
             System.out.println("Target Missed!");
-
+            laser.newSprayY();
             hit = false;
             laser.resetPosx();
         }
@@ -91,13 +127,21 @@ public class Main extends javax.swing.JFrame implements ActionListener {
             laser.resetPosx();
             System.out.println("Enemy Hit!");
             laser.getPositionx();
+            laser.newSprayY();
 
             enemy.setHealth(-3);
             hit = false;
+            if (enemy.health <= 3) {
+                enemy.setBackground(Color.red);
+            }
+            if (enemy.health <= 6 && enemy.health > 3) {
+                enemy.setBackground(Color.yellow);
+            }
         }
         if (enemy.getHealth() <= 0) {
             System.out.println("Enemy defeated!");
             hit = false;
+            enemy.setVisible(hit);
 
         }
 
