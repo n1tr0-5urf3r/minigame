@@ -21,6 +21,7 @@ public class Main extends javax.swing.JFrame implements ActionListener {
      */
     //Create objects
     public Player player1 = new Player();
+    public hud hud = new hud();
     public Enemy enemy = new Enemy();
     public Laserbeam laser = new Laserbeam();
     private boolean hit = false;
@@ -38,6 +39,10 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         player1.setLocation(50, 100);
         player1.setText("Player1");
 
+        //Show the HUD
+        getContentPane().add(hud);
+        hud.setLocation(player1.getX(), player1.getY() + 50);
+
         //Draw the enemy's ship
         getContentPane().add(enemy);
         enemy.setText("X");
@@ -51,23 +56,23 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         //Player1 listens to (Click-)Action
         player1.addActionListener(this);
 
-        //Start enemy movement
-        
+        //Start enemy movement       
         Thread enemyMove = new Thread() {
             public void run() {
-                while (true){
-                while (enemy.getPositiony()>0) {
-                    
-                    enemy.moveTop();
+                while (true) {
+                    while (enemy.getPositiony() > 0) {
+
+                        enemy.moveTop();
+                    }
+
+                    while (enemy.getPositiony() < 200) {
+                        enemy.moveBot();
+                    }
+
                 }
-                
-                while (enemy.getPositiony()<200)    
-                    enemy.moveBot();
-                
             }
-                }
         };
-        
+
         enemyMove.start();
     }
 
@@ -110,6 +115,7 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         //Missed top
         if (laser.getPositionx() >= enemy.getPositionx() && laser.getPositiony() < enemy.getPositiony()) {
             System.out.println("Target Missed!");
+            hud.setText("Target Missed");
             hit = false;
             laser.resetPosx();
             laser.newSprayY();
@@ -118,6 +124,7 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         //Missed bottom
         if (laser.getPositionx() >= enemy.getPositionx() && laser.getPositiony() > (enemy.getPositiony() + enemy.getHeight())) {
             System.out.println("Target Missed!");
+            hud.setText("Target Missed");
             laser.newSprayY();
             hit = false;
             laser.resetPosx();
@@ -126,6 +133,7 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         if (hit) {
             laser.resetPosx();
             System.out.println("Enemy Hit!");
+            hud.setText("Enemy hit");
             laser.getPositionx();
             laser.newSprayY();
 
@@ -140,6 +148,7 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         }
         if (enemy.getHealth() <= 0) {
             System.out.println("Enemy defeated!");
+            hud.setText("Enemy defeated");
             hit = false;
             enemy.setVisible(hit);
 
