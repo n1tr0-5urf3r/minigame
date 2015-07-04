@@ -21,6 +21,7 @@ import java.awt.event.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 /**
  *
@@ -44,13 +45,14 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
     private final ImageIcon PlayerShip = new ImageIcon("src/resources/playership.png");
     private final ImageIcon EnemyShip = new ImageIcon("src/resources/enemyship.png");
     private boolean enemyDefeated = false;
+    
 
     // Inititalize Variables
     private boolean hit = false;
     //private double attackSpeed = 1.0;
 
     public Main() {
-
+        setContentPane(new JLabel(new ImageIcon("src/resources/background.png")));
         initComponents();
         //Life at start
         System.out.println("Player1 has " + player1.getHealth() + " life left");
@@ -129,6 +131,7 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
             System.out.println("Enemy defeated!");
             hud.setText("Enemy defeated");
             enemyDefeated = true;
+            EnemyHealth.setBackground(Color.black);
             hit = false;
             enemy.setVisible(hit);
 
@@ -196,7 +199,7 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
                         //EnemyHealth.moveTop();
                     }
 
-                    while (enemy.getPositiony() < 200) {
+                    while (enemy.getPositiony() < 400) {
                         enemy.moveBot();
                         //EnemyHealth.moveBot();
                     }
@@ -238,7 +241,7 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         EnemyHealth.setFocusable(false);
 
         hud.setBounds(200, 30, 200, 30);
-        hud.setLocation(110, 260);
+        hud.setLocation(110, 450);
 
         PlayerHealth.setLocation(player1.getX(), player1.getY() - 10);
         PlayerHealth.setBackground(Color.green);

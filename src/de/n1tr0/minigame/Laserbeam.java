@@ -100,8 +100,8 @@ public class Laserbeam extends JRadioButton {
     public void stickToPlayer(int playerX, int playerY) {
         this.setLocation(playerX, playerY);
     }
-    
-    public boolean laserIsActive (){
+
+    public boolean laserIsActive() {
         boolean laserActive = this.isVisible();
         return laserActive;
     }

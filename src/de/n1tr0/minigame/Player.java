@@ -16,13 +16,13 @@
  */
 package de.n1tr0.minigame;
 
-import javax.swing.JButton;
+import javax.swing.JRadioButton;
 
 /**
  *
  * @author Fabi
  */
-public class Player extends JButton {
+public class Player extends JRadioButton {
 
     public int health;
     private final int width = 70;
