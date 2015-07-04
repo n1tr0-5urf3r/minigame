@@ -1,20 +1,26 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* 
+ * Copyright (C) 2015 Fabi
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package de.n1tr0.minigame;
 
 import java.awt.Color;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 
 /**
  *
@@ -28,8 +34,8 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
     //Create objects
     public Player player1 = new Player();
     public hud hud = new hud();
-    private hud EnemyHealth = new hud();
-    private hud PlayerHealth = new hud();
+    private final hud EnemyHealth = new hud();
+    private final hud PlayerHealth = new hud();
     public Enemy enemy = new Enemy();
     public Laserbeam laser = new Laserbeam();
     public Laserbeam enemyLaser = new Laserbeam();
@@ -158,18 +164,19 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
             hud.setText("You got hit!");
             laser.getPositionx();
 
-            player1.setHealth(-1);
+            player1.setHealth(-2);
             hit = false;
-            if (player1.health <= 93) {
-                player1.setBackground(Color.yellow);
+            if (player1.health <= 15) {
+                PlayerHealth.setBackground(Color.yellow);
             }
-            if (player1.health <= 80 && player1.health > 50) {
-                player1.setBackground(Color.red);
+            if (player1.health <= 8 && player1.health > 1) {
+                PlayerHealth.setBackground(Color.red);
             }
         }
         if (player1.getHealth() <= 0) {
             System.out.println("You got defeated");
             hud.setText("You got defeated");
+            PlayerHealth.setBackground(Color.black);
             hit = false;
         }
 
@@ -290,13 +297,17 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         // AttackSpeed will be handed over to the Laser and make Steps of 12 multiplied with attackSpeed
         double stepsToEnemy = (enemy.getX() - player1.getX()) / (12 * laser.getAttackSpeed());
         laser.setVisible(true);
+        
+        // Position from where the laser will shoot, if commented and Position in for loop set to getY(), Laser will follow when ship is moving
+        // Maybe implement upgrade for aiming later (if clause)
+        double currentPosYPlayer=player1.getY();
 
         Thread moveThread = new Thread() {
             public void run() {
                 for (int i = 0; i < stepsToEnemy; i++) {
                     player1.setEnabled(false);
-                    laser.shootLaser(player1.getX(), player1.getY());
-                    laser.sprayY();
+                    laser.shootLaser(player1.getX(), currentPosYPlayer);
+                    //laser.sprayY();
                     checkHit();
                     try {
                         Thread.sleep(100);
