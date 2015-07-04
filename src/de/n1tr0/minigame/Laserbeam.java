@@ -70,6 +70,7 @@ public class Laserbeam extends JRadioButton {
     public void resetPosx(int playerX, int playerY) {
         firstShot = true;
         this.setLocation(playerX, playerY);
+        this.setVisible(false);
     }
 
     public void resetEnemyPos(int enemyX, int enemyY) {

@@ -26,8 +26,10 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
     public Enemy enemy = new Enemy();
     public Laserbeam laser = new Laserbeam();
     public Laserbeam enemyLaser = new Laserbeam();
-    private ImageIcon Laserbeam = new ImageIcon("src/resources/arrow.png");
-    private boolean enemyDefeated=false;
+    private final ImageIcon Laserbeam_red = new ImageIcon("src/resources/laser_red.png");
+    private final ImageIcon Laserbeam_green = new ImageIcon("src/resources/laser_green.png");
+    private final ImageIcon PlayerShip = new ImageIcon("src/resources/playership.png");
+    private boolean enemyDefeated = false;
 
     // Inititalize Variables
     private boolean hit = false;
@@ -110,7 +112,7 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         if (enemy.getHealth() <= 0) {
             System.out.println("Enemy defeated!");
             hud.setText("Enemy defeated");
-            enemyDefeated=true;
+            enemyDefeated = true;
             hit = false;
             enemy.setVisible(hit);
 
@@ -189,7 +191,8 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         //Draw the player's ship
         getContentPane().add(player1);
         player1.setLocation(50, 100);
-        player1.setText("Player1");
+        //player1.setText("Player1");
+        player1.setIcon(PlayerShip);
         System.out.println("Initialized Player1");
 
     }
@@ -213,6 +216,8 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         laser.setLocation(player1.getX(), player1.getY());
         laser.setEnabled(false);
         laser.setAttackSpeed(1.0);
+        laser.setVisible(false);
+        laser.setDisabledIcon(Laserbeam_green);
         System.out.println("Initialized Lasers");
 
     }
@@ -222,7 +227,7 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         enemyLaser.setLocation(enemy.getX(), enemy.getY());
         enemyLaser.setEnabled(false);
         enemyLaser.setAttackSpeed(1.0);
-        enemyLaser.setDisabledIcon(Laserbeam);
+        enemyLaser.setDisabledIcon(Laserbeam_red);
         System.out.println("Initialized Enemy Lasers");
         enemyShot();
 
@@ -261,6 +266,7 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         // Initialize Lasers with AttackSpeed 1.0
         // AttackSpeed will be handed over to the Laser and make Steps of 12 multiplied with attackSpeed
         double stepsToEnemy = (enemy.getX() - player1.getX()) / (12 * laser.getAttackSpeed());
+        laser.setVisible(true);
 
         Thread moveThread = new Thread() {
             public void run() {
