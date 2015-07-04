@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  *
  * @author Fabi
  */
-public class Main extends javax.swing.JFrame implements ActionListener {
+public class Main extends javax.swing.JFrame implements ActionListener, KeyListener {
 
     /**
      * Creates new form Main
@@ -24,11 +24,11 @@ public class Main extends javax.swing.JFrame implements ActionListener {
     public hud hud = new hud();
     public Enemy enemy = new Enemy();
     public Laserbeam laser = new Laserbeam();
-    
+    public Laserbeam enemyLaser = new Laserbeam();
+
     // Inititalize Variables
     private boolean hit = false;
     //private double attackSpeed = 1.0;
-
 
     public Main() {
         int x = (int) (Math.random() * -5 + 25);
@@ -37,76 +37,24 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         //Life at start
         System.out.println("Player1 has " + player1.getHealth() + " life left");
 
-        //Draw the player's ship
-        getContentPane().add(player1);
-        player1.setLocation(50, 100);
-        player1.setText("Player1");
-
-        //Show the HUD
-        getContentPane().add(hud);
-        hud.setLocation(player1.getX(), player1.getY() + 50);
-
-        //Draw the enemy's ship
-        getContentPane().add(enemy);
-        enemy.setText("X");
-        enemy.setLocation(350, 100);
-
-        //Test the lasers
-        getContentPane().add(laser);
-        laser.setLocation(player1.getX(), 100);
-        laser.setEnabled(false);
-        laser.setAttackSpeed(1.0);
+        initPlayer();
+        initHUD();
+        initEnemy();
+        initLasers();
+        enemyMovement();
+        initEnemyLasers();
 
         //Player1 listens to (Click-)Action
         player1.addActionListener(this);
-
-        //Start enemy movement       
-        Thread enemyMove = new Thread() {
-            public void run() {
-                while (true) {
-                    while (enemy.getPositiony() > 0) {
-
-                        enemy.moveTop();
-                    }
-
-                    while (enemy.getPositiony() < 200) {
-                        enemy.moveBot();
-                    }
-
-                }
-            }
-        };
-
-        enemyMove.start();
+        player1.setFocusable(true);
+        enemy.addKeyListener(this);
     }
 
     // Says what happens when an action is performed
     @Override
 
     public void actionPerformed(ActionEvent e) {
-
-        // Initialize Lasers with AttackSpeed 1.0
-        // AttackSpeed will be handed over to the Laser and make Steps of 12 multiplied with attackSpeed
-        double stepsToEnemy = (enemy.getX() - player1.getX()) / (12 * laser.getAttackSpeed());
-        
-        Thread moveThread = new Thread() {
-            public void run() {
-                for (int i = 0; i < stepsToEnemy; i++) {
-                    player1.setEnabled(false);
-                    laser.moveRight();
-                    laser.sprayY();
-                    checkHit();
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                }
-                player1.setEnabled(true);
-            }
-        };
-        moveThread.start();
+        shoot();
 
     }
 
@@ -127,7 +75,7 @@ public class Main extends javax.swing.JFrame implements ActionListener {
             System.out.println("Target Missed!");
             hud.setText("Target Missed");
             hit = false;
-            laser.resetPosx();
+            laser.resetPosx(player1.getX(), player1.getY());
             laser.newSprayY();
         }
 
@@ -137,11 +85,11 @@ public class Main extends javax.swing.JFrame implements ActionListener {
             hud.setText("Target Missed");
             laser.newSprayY();
             hit = false;
-            laser.resetPosx();
+            laser.resetPosx(player1.getX(), player1.getY());
         }
 
         if (hit) {
-            laser.resetPosx();
+            laser.resetPosx(player1.getX(), player1.getY());
             System.out.println("Enemy Hit!");
             hud.setText("Enemy hit");
             laser.getPositionx();
@@ -164,6 +112,195 @@ public class Main extends javax.swing.JFrame implements ActionListener {
 
         }
 
+    }
+
+    private void checkPlayerGotHit() {
+
+        //Get location of laser and enemy and test if hit
+        //Hit on top
+        if (enemyLaser.getPositionx() <= player1.getX() + player1.getWidth() && enemyLaser.getPositiony() >= player1.getY() && enemyLaser.getY() <= (player1.getY() + player1.getHeight())) {
+            hit = true;
+        }
+
+        //Hit on bottom
+        if (enemyLaser.getPositionx() <= player1.getX() + player1.getWidth() && enemyLaser.getPositiony() <= (player1.getY() + player1.getHeight()) && enemyLaser.getPositiony() >= player1.getY()) {
+            hit = true;
+        }
+
+        //Missed top
+        if (enemyLaser.getPositionx() <= player1.getX() && enemyLaser.getPositiony() < player1.getY()) {
+            hit = false;
+            enemyLaser.resetEnemyPosX(enemy.getX(), enemy.getY());
+        }
+
+        //Missed bottom
+        if (enemyLaser.getPositionx() <= player1.getX() && enemyLaser.getPositiony() > (player1.getY() + player1.getHeight())) {
+            hit = false;
+            enemyLaser.resetEnemyPosX(enemy.getX(), enemy.getY());
+        }
+
+        if (hit) {
+            enemyLaser.resetEnemyPosX(enemy.getX(), enemy.getY());
+            System.out.println("You got hit!");
+            hud.setText("You got hit!");
+            laser.getPositionx();
+
+            player1.setHealth(-1);
+            hit = false;
+            if (player1.health <= 93) {
+                player1.setBackground(Color.yellow);
+            }
+            if (player1.health <= 80 && player1.health > 50) {
+                player1.setBackground(Color.red);
+            }
+        }
+        if (player1.getHealth() <= 0) {
+            System.out.println("You got defeated");
+            hud.setText("You got defeated");
+            hit = false;
+        }
+
+    }
+
+    private void enemyMovement() {
+        Thread enemyMove = new Thread() {
+            public void run() {
+                while (true) {
+                    while (enemy.getPositiony() > 0) {
+
+                        enemy.moveTop();
+                    }
+
+                    while (enemy.getPositiony() < 200) {
+                        enemy.moveBot();
+                    }
+
+                }
+            }
+        };
+        enemyMove.start();
+    }
+
+    private void initPlayer() {
+        //Draw the player's ship
+        getContentPane().add(player1);
+        player1.setLocation(50, 100);
+        player1.setText("Player1");
+        System.out.println("Initialized Player1");
+
+    }
+
+    private void initHUD() {
+        getContentPane().add(hud);
+        hud.setLocation(player1.getX(), player1.getY() + 50);
+        System.out.println("Initialized HUD");
+        hud.setFocusable(false);
+    }
+
+    private void initEnemy() {
+        getContentPane().add(enemy);
+        enemy.setText("X");
+        enemy.setLocation(350, 100);
+        System.out.println("Initialized Enemy");
+    }
+
+    private void initLasers() {
+        getContentPane().add(laser);
+        laser.setLocation(player1.getX(), player1.getY());
+        laser.setEnabled(false);
+        laser.setAttackSpeed(1.0);
+        System.out.println("Initialized Lasers");
+
+    }
+
+    private void initEnemyLasers() {
+        getContentPane().add(enemyLaser);
+        enemyLaser.setLocation(enemy.getX(), enemy.getY());
+        enemyLaser.setEnabled(false);
+        enemyLaser.setAttackSpeed(0.5);
+        System.out.println("Initialized Enemy Lasers");
+        enemyShot();
+
+    }
+
+    private void enemyShot() {
+        Thread enemyShot = new Thread() {
+            public void run() {
+                for (int i = 0; i < 50; i++) {
+                    enemyLaser.shootEnemyLaser(enemy.getX(), enemy.getY());
+                    checkPlayerGotHit();
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                enemyLaser.resetEnemyPosX(enemy.getX(), enemy.getY());
+
+            }
+        };
+        enemyShot.start();
+    }
+
+    private void shoot() {
+
+        // Initialize Lasers with AttackSpeed 1.0
+        // AttackSpeed will be handed over to the Laser and make Steps of 12 multiplied with attackSpeed
+        double stepsToEnemy = (enemy.getX() - player1.getX()) / (12 * laser.getAttackSpeed());
+
+        Thread moveThread = new Thread() {
+            public void run() {
+                for (int i = 0; i < stepsToEnemy; i++) {
+                    player1.setEnabled(false);
+                    laser.shootLaser(player1.getX(), player1.getY());
+                    laser.sprayY();
+                    checkHit();
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }
+                player1.setEnabled(true);
+            }
+        };
+        moveThread.start();
+    }
+
+    public void keyTyped(KeyEvent e) {
+        // Invoked when a key has been typed.
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        // Invoked when a key has been pressed.
+//        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+//            player1.moveRight();
+//            laser.stickToPlayer(player1.getX(), player1.getY());
+//        }
+//        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+//            player1.moveLeft();
+//            laser.stickToPlayer(player1.getX(), player1.getY());
+//
+//        }
+        if (e.getKeyCode() == KeyEvent.VK_UP) {
+            player1.moveUp();
+            //laser.stickToPlayer(player1.getX(), player1.getY());
+
+        }
+        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            player1.moveDown();
+            //laser.stickToPlayer(player1.getX(), player1.getY());
+
+        }
+        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            shoot();
+        }
+    }
+
+    public void keyReleased(KeyEvent e) {
+        // Invoked when a key has been released.
     }
 
     /**
@@ -205,16 +342,21 @@ public class Main extends javax.swing.JFrame implements ActionListener {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Main.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Main.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Main.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Main.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 

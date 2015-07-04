@@ -13,13 +13,13 @@ import javax.swing.JRadioButton;
  */
 public class Laserbeam extends JRadioButton {
 
-    double x = 50;
+    double x = 0;
     private final int width = 20;
     private final int height = 20;
-    int randY = (int) (Math.random()*40+1);
-    public double AttackSpeed =1.0;
-   
-  
+    int randY = (int) (Math.random() * 40 + 1);
+    public double AttackSpeed = 1.0;
+    public boolean firstShot = true;
+    private double enemy = 350;
 
     public Laserbeam() {
         super();
@@ -28,17 +28,31 @@ public class Laserbeam extends JRadioButton {
 
     public void init() {
         this.setBounds(width, height, width, height);
-        
+
     }
 
-    public void moveRight() {
+    public void shootLaser(double playerX, double playerY) {
+        double startingPointX = playerX;
+        while (firstShot) {
+            x = (startingPointX + 12 * this.AttackSpeed);
+            this.setLocation((int) x, (int) playerY);
+            System.out.println("X1" + x);
+            firstShot = false;
+        }
 
-        x = (x+12*this.AttackSpeed);
-            this.setLocation((int) x, 100);  
+        x = (x + 12 * this.AttackSpeed);
+        System.out.println("X2 " + x);
+
+        this.setLocation((int) x, (int) playerY);
     }
-    
-    public void sprayY(){
-          
+
+    public void shootEnemyLaser(double EnemyX, double EnemyY) {
+        enemy = (enemy - 12 * this.AttackSpeed);
+        this.setLocation((int) enemy, 100);
+    }
+
+    public void sprayY() {
+
         int currentY = this.getPositiony() + randY;
         this.setLocation(this.getX(), currentY);
     }
@@ -47,27 +61,36 @@ public class Laserbeam extends JRadioButton {
         int current_x = this.getX();
         return current_x;
     }
-    
+
     public int getPositiony() {
         int current_y = this.getY();
         return current_y;
     }
 
-    public void resetPosx() {
-        x=50;
-        this.setLocation(50, 100);
+    public void resetPosx(int playerX, int playerY) {
+        firstShot = true;
+        this.setLocation(playerX, playerY);
     }
-    
-    public void newSprayY(){
-        randY = (int) (Math.random()*40+1);
+
+    public void resetEnemyPosX(int enemyX, int enemyY) {
+        this.setLocation(enemyX, enemyY);
+
     }
-    
-    public double getAttackSpeed(){
+
+    public void newSprayY() {
+        randY = (int) (Math.random() * 40 + 1);
+    }
+
+    public double getAttackSpeed() {
         return AttackSpeed;
     }
-    
+
     public void setAttackSpeed(double AttackSpeed) {
-        this.AttackSpeed=AttackSpeed;
+        this.AttackSpeed = AttackSpeed;
+    }
+
+    public void stickToPlayer(int playerX, int playerY) {
+        this.setLocation(playerX, playerY);
     }
 
 }

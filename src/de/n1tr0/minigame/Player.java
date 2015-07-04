@@ -36,5 +36,19 @@ public class Player extends JButton {
     public int getHealth() {
         return this.health;
     }
+    
+    public void moveRight(){
+      this.setLocation(this.getX()+20,this.getY());  
+    }
+    
+    public void moveLeft(){
+      this.setLocation(this.getX()-20,this.getY());  
+    }
+    public void moveUp(){
+      this.setLocation(this.getX(),this.getY()-10);  
+    }
+    public void moveDown(){
+      this.setLocation(this.getX(),this.getY()+10);  
+    }
 
 }
