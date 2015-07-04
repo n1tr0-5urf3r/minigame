@@ -51,10 +51,11 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
 
     public Main() {
 
-        int x = (int) (Math.random() * -5 + 25);
         initComponents();
         //Life at start
         System.out.println("Player1 has " + player1.getHealth() + " life left");
+
+        // Initialize Objects
         initPlayer();
         initHUD();
         initEnemy();
@@ -62,7 +63,7 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         enemyMovement();
         initEnemyLasers();
 
-        //Player1 listens to (Click-)Action
+        //Player1 listens to (Click-)Actions
         player1.addActionListener(this);
         player1.setFocusable(true);
         enemy.addKeyListener(this);
@@ -71,11 +72,13 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
     // Says what happens when an action is performed
     @Override
 
+    // MouseAction for Players shot
     public void actionPerformed(ActionEvent e) {
         shoot();
 
     }
 
+    // Check hitboxes of Enemy and set colors according to Health
     private void checkHit() {
         //Get location of laser and enemy and test if hit
         //Hit on top
@@ -133,6 +136,7 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
 
     }
 
+    // Check hitboxes of Player and set colors according to Health
     private void checkPlayerGotHit() {
 
         //Get location of laser and enemy and test if hit
@@ -182,6 +186,7 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
 
     }
 
+    // Enemyship will move in y direction continously, if Healthbar movement activated, you can't control your ship anymore (bug #1)
     private void enemyMovement() {
         Thread enemyMove = new Thread() {
             public void run() {
@@ -202,6 +207,7 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         enemyMove.start();
     }
 
+    // Player Ship
     private void initPlayer() {
         //Draw the player's ship
         getContentPane().add(player1);
@@ -212,6 +218,7 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
 
     }
 
+    // Enemy Ship
     private void initEnemy() {
         getContentPane().add(enemy);
         enemy.setLocation(320, 100);
@@ -220,6 +227,7 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         System.out.println("Initialized Enemy");
     }
 
+    // Healthbars for Enemy and Player, Statusbar in lower middle
     private void initHUD() {
         getContentPane().add(hud);
         getContentPane().add(PlayerHealth);
@@ -241,6 +249,7 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         System.out.println("Initialized HUD");
     }
 
+    // Players Lasers with Attack Speed 1, start not visible, green laser icon
     private void initLasers() {
         getContentPane().add(laser);
         laser.setLocation(player1.getX(), player1.getY());
@@ -252,6 +261,7 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
 
     }
 
+    // Enemy Lasers with Attack Speed1, red icon and start not visible.
     private void initEnemyLasers() {
         getContentPane().add(enemyLaser);
         enemyLaser.setLocation(enemy.getX(), enemy.getY());
@@ -263,6 +273,8 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
 
     }
 
+    // Enemy Lasershot, will shot while enemy is alive, sets Laser to visble. Laser goes to players position when it's released. 
+    // Afterwards reset to Enemy Position
     private void enemyShot() {
         Thread enemyShot = new Thread() {
             public void run() {
@@ -291,23 +303,24 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
 
     }
 
+    // Players shot, is commenced when Keylistener or Mouselistener activated, stepsToenemy calculates the distance needed to the enemy for hitting.
     private void shoot() {
 
         // Initialize Lasers with AttackSpeed 1.0
         // AttackSpeed will be handed over to the Laser and make Steps of 12 multiplied with attackSpeed
         double stepsToEnemy = (enemy.getX() - player1.getX()) / (12 * laser.getAttackSpeed());
         laser.setVisible(true);
-        
+
         // Position from where the laser will shoot, if commented and Position in for loop set to getY(), Laser will follow when ship is moving
         // Maybe implement upgrade for aiming later (if clause)
-        double currentPosYPlayer=player1.getY();
+        double currentPosYPlayer = player1.getY();
 
         Thread moveThread = new Thread() {
             public void run() {
                 for (int i = 0; i < stepsToEnemy; i++) {
                     player1.setEnabled(false);
                     laser.shootLaser(player1.getX(), currentPosYPlayer);
-                    //laser.sprayY();
+                    laser.sprayY();
                     checkHit();
                     try {
                         Thread.sleep(100);
@@ -326,6 +339,10 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         // Invoked when a key has been typed.
     }
 
+    // Arrow Up for Up
+    // Arrow Down for Down
+    // Space for shooting
+    // Left/Right currently disabled (buggy)
     @Override
     public void keyPressed(KeyEvent e) {
         // Invoked when a key has been pressed.
@@ -351,7 +368,12 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
 
         }
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            shoot();
+            if (laser.laserIsActive()) {
+                hud.setText("Laser is cooling down");
+            } else {
+                shoot();
+            }
+
         }
     }
 
