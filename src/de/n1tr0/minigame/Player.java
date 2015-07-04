@@ -37,8 +37,4 @@ public class Player extends JButton {
         return this.health;
     }
 
-        public int getPositionx() {
-        int current_x = this.getX();
-        return current_x;
-    }
 }

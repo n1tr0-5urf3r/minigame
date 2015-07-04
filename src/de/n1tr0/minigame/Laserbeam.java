@@ -17,6 +17,7 @@ public class Laserbeam extends JRadioButton {
     private final int width = 20;
     private final int height = 20;
     int randY = (int) (Math.random()*40+1);
+    public double AttackSpeed =1.0;
    
   
 
@@ -30,9 +31,9 @@ public class Laserbeam extends JRadioButton {
         
     }
 
-    public void moveRight(double attackSpeed) {
+    public void moveRight() {
 
-        x = (x+12*attackSpeed);
+        x = (x+12*this.AttackSpeed);
             this.setLocation((int) x, 100);  
     }
     
@@ -59,6 +60,14 @@ public class Laserbeam extends JRadioButton {
     
     public void newSprayY(){
         randY = (int) (Math.random()*40+1);
+    }
+    
+    public double getAttackSpeed(){
+        return AttackSpeed;
+    }
+    
+    public void setAttackSpeed(double AttackSpeed) {
+        this.AttackSpeed=AttackSpeed;
     }
 
 }
