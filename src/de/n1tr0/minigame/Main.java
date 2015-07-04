@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.event.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -25,6 +26,8 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
     public Enemy enemy = new Enemy();
     public Laserbeam laser = new Laserbeam();
     public Laserbeam enemyLaser = new Laserbeam();
+    private ImageIcon Laserbeam = new ImageIcon("src/resources/arrow.png");
+    private boolean enemyDefeated=false;
 
     // Inititalize Variables
     private boolean hit = false;
@@ -107,6 +110,7 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         if (enemy.getHealth() <= 0) {
             System.out.println("Enemy defeated!");
             hud.setText("Enemy defeated");
+            enemyDefeated=true;
             hit = false;
             enemy.setVisible(hit);
 
@@ -130,17 +134,17 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         //Missed top
         if (enemyLaser.getPositionx() <= player1.getX() && enemyLaser.getPositiony() < player1.getY()) {
             hit = false;
-            enemyLaser.resetEnemyPosX(enemy.getX(), enemy.getY());
+            enemyLaser.resetEnemyPos(enemy.getX(), enemy.getY());
         }
 
         //Missed bottom
         if (enemyLaser.getPositionx() <= player1.getX() && enemyLaser.getPositiony() > (player1.getY() + player1.getHeight())) {
             hit = false;
-            enemyLaser.resetEnemyPosX(enemy.getX(), enemy.getY());
+            enemyLaser.resetEnemyPos(enemy.getX(), enemy.getY());
         }
 
         if (hit) {
-            enemyLaser.resetEnemyPosX(enemy.getX(), enemy.getY());
+            enemyLaser.resetEnemyPos(enemy.getX(), enemy.getY());
             System.out.println("You got hit!");
             hud.setText("You got hit!");
             laser.getPositionx();
@@ -217,7 +221,8 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         getContentPane().add(enemyLaser);
         enemyLaser.setLocation(enemy.getX(), enemy.getY());
         enemyLaser.setEnabled(false);
-        enemyLaser.setAttackSpeed(0.5);
+        enemyLaser.setAttackSpeed(1.0);
+        enemyLaser.setDisabledIcon(Laserbeam);
         System.out.println("Initialized Enemy Lasers");
         enemyShot();
 
@@ -226,20 +231,29 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
     private void enemyShot() {
         Thread enemyShot = new Thread() {
             public void run() {
-                for (int i = 0; i < 50; i++) {
-                    enemyLaser.shootEnemyLaser(enemy.getX(), enemy.getY());
-                    checkPlayerGotHit();
+                while (!enemyDefeated) {
+                    enemyLaser.setVisible(true);
+                    for (int i = 0; i < 50; i++) {
+                        enemyLaser.shootEnemyLaser(enemy.getX(), enemy.getY());
+                        checkPlayerGotHit();
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    enemyLaser.setVisible(false);
+                    enemyLaser.resetEnemyPos(enemy.getX(), enemy.getY());
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(1000);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-                enemyLaser.resetEnemyPosX(enemy.getX(), enemy.getY());
-
             }
         };
         enemyShot.start();
+
     }
 
     private void shoot() {
