@@ -13,10 +13,11 @@ import javax.swing.JRadioButton;
  */
 public class Laserbeam extends JRadioButton {
 
-    int x = 50;
+    double x = 50;
     private final int width = 20;
     private final int height = 20;
     int randY = (int) (Math.random()*40+1);
+   
   
 
     public Laserbeam() {
@@ -29,10 +30,10 @@ public class Laserbeam extends JRadioButton {
         
     }
 
-    public void moveRight() {
+    public void moveRight(double attackSpeed) {
 
-        x = x+12;
-            this.setLocation(x, 100);  
+        x = (x+12*attackSpeed);
+            this.setLocation((int) x, 100);  
     }
     
     public void sprayY(){

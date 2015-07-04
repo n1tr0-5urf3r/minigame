@@ -25,10 +25,10 @@ public class Main extends javax.swing.JFrame implements ActionListener {
     public Enemy enemy = new Enemy();
     public Laserbeam laser = new Laserbeam();
     private boolean hit = false;
+    
 
     public Main() {
         int x = (int) (Math.random() * -5 + 25);
-        System.out.println(x);
         initComponents();
 
         //Life at start
@@ -38,6 +38,7 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         getContentPane().add(player1);
         player1.setLocation(50, 100);
         player1.setText("Player1");
+        
 
         //Show the HUD
         getContentPane().add(hud);
@@ -80,11 +81,18 @@ public class Main extends javax.swing.JFrame implements ActionListener {
     @Override
 
     public void actionPerformed(ActionEvent e) {
+        
+        // Initialize Lasers with AttackSpeed 1.0
+        // AttackSpeed will be handed over to the Laser and make Steps of 12 multiplied with attackSpeed
+
+        double attackSpeed = 1.0;
+        double stepsToEnemy =  (enemy.getX() -player1.getX())/(12*attackSpeed);
+        System.out.println(stepsToEnemy);
         Thread moveThread = new Thread() {
             public void run() {
-                for (int i = 0; i < 25; i++) {
-
-                    laser.moveRight();
+                for (int i = 0; i < stepsToEnemy; i++) {
+                    player1.setEnabled(false);
+                    laser.moveRight(attackSpeed);
                     laser.sprayY();
                     checkHit();
                     try {
@@ -94,6 +102,7 @@ public class Main extends javax.swing.JFrame implements ActionListener {
                     }
 
                 }
+                player1.setEnabled(true);
             }
         };
         moveThread.start();
