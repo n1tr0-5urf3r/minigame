@@ -9,8 +9,8 @@ import javax.swing.JButton;
 public class Enemy extends JButton {
 
     public int health;
-    private final int width = 40;
-    private final int height = 40;
+    private final int width = 70;
+    private final int height = 50;
     private double PosY = this.getPositiony();
 
     public Enemy() {

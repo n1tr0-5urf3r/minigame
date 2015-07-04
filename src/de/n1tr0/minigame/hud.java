@@ -13,8 +13,9 @@ import javax.swing.JTextArea;
  */
 public class hud extends JTextArea {
 
-    private final int width = 100;
-    private final int height = 30;
+    private final int width = 70;
+    private final int height = 10;
+    private double PosY = this.getY();
 
     public hud() {
         super();
@@ -23,5 +24,23 @@ public class hud extends JTextArea {
 
     public void init() {
         this.setBounds(width, height, width, height);
+    }
+
+    public void moveUp() {
+        this.setLocation(this.getX(), this.getY() - 10);
+    }
+
+    public void moveDown() {
+        this.setLocation(this.getX(), this.getY() + 10);
+    }
+
+    public void moveBot() {
+        PosY = PosY + 0.000001;
+        this.setLocation(this.getX(), (int) PosY);
+    }
+
+    public void moveTop() {
+        PosY = PosY - 0.000001;
+        this.setLocation(this.getX(), (int) PosY);
     }
 }

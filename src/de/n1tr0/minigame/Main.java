@@ -7,9 +7,14 @@ package de.n1tr0.minigame;
 
 import java.awt.Color;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 /**
  *
@@ -23,12 +28,15 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
     //Create objects
     public Player player1 = new Player();
     public hud hud = new hud();
+    private hud EnemyHealth = new hud();
+    private hud PlayerHealth = new hud();
     public Enemy enemy = new Enemy();
     public Laserbeam laser = new Laserbeam();
     public Laserbeam enemyLaser = new Laserbeam();
     private final ImageIcon Laserbeam_red = new ImageIcon("src/resources/laser_red.png");
     private final ImageIcon Laserbeam_green = new ImageIcon("src/resources/laser_green.png");
     private final ImageIcon PlayerShip = new ImageIcon("src/resources/playership.png");
+    private final ImageIcon EnemyShip = new ImageIcon("src/resources/enemyship.png");
     private boolean enemyDefeated = false;
 
     // Inititalize Variables
@@ -36,12 +44,11 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
     //private double attackSpeed = 1.0;
 
     public Main() {
+
         int x = (int) (Math.random() * -5 + 25);
         initComponents();
-
         //Life at start
         System.out.println("Player1 has " + player1.getHealth() + " life left");
-
         initPlayer();
         initHUD();
         initEnemy();
@@ -103,10 +110,10 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
             enemy.setHealth(-3);
             hit = false;
             if (enemy.health <= 3) {
-                enemy.setBackground(Color.red);
+                EnemyHealth.setBackground(Color.red);
             }
             if (enemy.health <= 6 && enemy.health > 3) {
-                enemy.setBackground(Color.yellow);
+                EnemyHealth.setBackground(Color.yellow);
             }
         }
         if (enemy.getHealth() <= 0) {
@@ -173,12 +180,13 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
             public void run() {
                 while (true) {
                     while (enemy.getPositiony() > 0) {
-
                         enemy.moveTop();
+                        //EnemyHealth.moveTop();
                     }
 
                     while (enemy.getPositiony() < 200) {
                         enemy.moveBot();
+                        //EnemyHealth.moveBot();
                     }
 
                 }
@@ -191,24 +199,39 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         //Draw the player's ship
         getContentPane().add(player1);
         player1.setLocation(50, 100);
-        //player1.setText("Player1");
         player1.setIcon(PlayerShip);
+        player1.setDisabledIcon(PlayerShip);
         System.out.println("Initialized Player1");
 
     }
 
-    private void initHUD() {
-        getContentPane().add(hud);
-        hud.setLocation(player1.getX(), player1.getY() + 50);
-        System.out.println("Initialized HUD");
-        hud.setFocusable(false);
-    }
-
     private void initEnemy() {
         getContentPane().add(enemy);
-        enemy.setText("X");
-        enemy.setLocation(350, 100);
+        enemy.setLocation(320, 100);
+        enemy.setIcon(EnemyShip);
+        enemy.setDisabledIcon(EnemyShip);
         System.out.println("Initialized Enemy");
+    }
+
+    private void initHUD() {
+        getContentPane().add(hud);
+        getContentPane().add(PlayerHealth);
+        getContentPane().add(EnemyHealth);
+
+        hud.setFocusable(false);
+        PlayerHealth.setFocusable(false);
+        EnemyHealth.setFocusable(false);
+
+        hud.setBounds(200, 30, 200, 30);
+        hud.setLocation(110, 260);
+
+        PlayerHealth.setLocation(player1.getX(), player1.getY() - 10);
+        PlayerHealth.setBackground(Color.green);
+
+        EnemyHealth.setLocation(280, enemy.getY() - 10);
+        EnemyHealth.setBackground(Color.green);
+
+        System.out.println("Initialized HUD");
     }
 
     private void initLasers() {
@@ -306,11 +329,13 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
 //        }
         if (e.getKeyCode() == KeyEvent.VK_UP) {
             player1.moveUp();
+            PlayerHealth.moveUp();
             //laser.stickToPlayer(player1.getX(), player1.getY());
 
         }
         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             player1.moveDown();
+            PlayerHealth.moveDown();
             //laser.stickToPlayer(player1.getX(), player1.getY());
 
         }

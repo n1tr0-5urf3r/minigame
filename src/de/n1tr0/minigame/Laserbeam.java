@@ -36,13 +36,9 @@ public class Laserbeam extends JRadioButton {
         while (firstShot) {
             x = (startingPointX + 12 * this.AttackSpeed);
             this.setLocation((int) x, (int) playerY);
-            System.out.println("X1" + x);
             firstShot = false;
         }
-
         x = (x + 12 * this.AttackSpeed);
-        System.out.println("X2 " + x);
-
         this.setLocation((int) x, (int) playerY);
     }
 
@@ -52,7 +48,6 @@ public class Laserbeam extends JRadioButton {
     }
 
     public void sprayY() {
-
         int currentY = this.getPositiony() + randY;
         this.setLocation(this.getX(), currentY);
     }
@@ -75,7 +70,7 @@ public class Laserbeam extends JRadioButton {
 
     public void resetEnemyPos(int enemyX, int enemyY) {
         this.setLocation(enemyX, enemyY);
-        enemy= enemyX;
+        enemy = enemyX;
     }
 
     public void newSprayY() {
