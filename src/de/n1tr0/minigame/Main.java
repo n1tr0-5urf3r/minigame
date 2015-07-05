@@ -45,7 +45,6 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
     private final ImageIcon PlayerShip = new ImageIcon("src/resources/playership.png");
     private final ImageIcon EnemyShip = new ImageIcon("src/resources/enemyship.png");
     private boolean enemyDefeated = false;
-    
 
     // Inititalize Variables
     private boolean hit = false;
@@ -132,6 +131,7 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
             hud.setText("Enemy defeated");
             enemyDefeated = true;
             EnemyHealth.setBackground(Color.black);
+            EnemyHealth.setLocation(320, 100);
             hit = false;
             enemy.setVisible(hit);
 
@@ -189,19 +189,23 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
 
     }
 
-    // Enemyship will move in y direction continously, if Healthbar movement activated, you can't control your ship anymore (bug #1)
+    // Enemyship will move in y direction continously
     private void enemyMovement() {
         Thread enemyMove = new Thread() {
             public void run() {
                 while (true) {
                     while (enemy.getPositiony() > 0) {
-                        enemy.moveTop();
-                        //EnemyHealth.moveTop();
+                        if (!enemyDefeated) {
+                            enemy.moveTop();
+                            EnemyHealth.moveTop();
+                        }
                     }
 
                     while (enemy.getPositiony() < 400) {
-                        enemy.moveBot();
-                        //EnemyHealth.moveBot();
+                        if (!enemyDefeated) {
+                            enemy.moveBot();
+                            EnemyHealth.moveBot();
+                        }
                     }
 
                 }
@@ -345,29 +349,28 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
     // Arrow Up for Up
     // Arrow Down for Down
     // Space for shooting
-    // Left/Right currently disabled (buggy)
+    // shooting while flying right/left may be buggy
     @Override
     public void keyPressed(KeyEvent e) {
         // Invoked when a key has been pressed.
-//        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-//            player1.moveRight();
-//            laser.stickToPlayer(player1.getX(), player1.getY());
-//        }
-//        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-//            player1.moveLeft();
-//            laser.stickToPlayer(player1.getX(), player1.getY());
-//
-//        }
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            player1.moveRight();
+            PlayerHealth.moveRight();
+
+        }
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            player1.moveLeft();
+            PlayerHealth.moveLeft();
+
+        }
         if (e.getKeyCode() == KeyEvent.VK_UP) {
             player1.moveUp();
             PlayerHealth.moveUp();
-            //laser.stickToPlayer(player1.getX(), player1.getY());
 
         }
         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             player1.moveDown();
             PlayerHealth.moveDown();
-            //laser.stickToPlayer(player1.getX(), player1.getY());
 
         }
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {

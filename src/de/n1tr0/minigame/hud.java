@@ -46,12 +46,19 @@ public class hud extends JTextArea {
     }
 
     public void moveBot() {
-        PosY = PosY + 0.000001;
+        PosY = PosY + 0.000003;
         this.setLocation(this.getX(), (int) PosY);
     }
 
     public void moveTop() {
-        PosY = PosY - 0.000001;
+        PosY = PosY - 0.000003;
         this.setLocation(this.getX(), (int) PosY);
+    }
+        public void moveRight() {
+        this.setLocation(this.getX() + 20, this.getY());
+    }
+
+    public void moveLeft() {
+        this.setLocation(this.getX() - 20, this.getY());
     }
 }

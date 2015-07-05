@@ -59,12 +59,12 @@ public class Enemy extends JRadioButton {
     }
 
     public void moveBot() {
-        PosY = PosY + 0.000001;
+        PosY = PosY + 0.000003;
         this.setLocation(this.getPositionx(), (int) PosY);
     }
 
     public void moveTop() {
-        PosY = PosY - 0.000001;
+        PosY = PosY - 0.000003;
         this.setLocation(this.getPositionx(), (int) PosY);
     }
 
