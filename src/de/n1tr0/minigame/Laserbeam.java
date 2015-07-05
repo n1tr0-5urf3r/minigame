@@ -107,7 +107,7 @@ public class Laserbeam extends JRadioButton {
     }
 
     public void setAttackSpeed(double AttackSpeed) {
-        this.AttackSpeed = AttackSpeed;
+        this.AttackSpeed = this.AttackSpeed + AttackSpeed;
     }
 
     public boolean laserIsActive() {

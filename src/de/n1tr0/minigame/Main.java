@@ -33,13 +33,14 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
      * Creates new form Main
      */
     //Create objects
-    public Player player1 = new Player();
-    public hud hud = new hud();
+    private Player player1 = new Player();
+    private hud hud = new hud();
+    private skillStats attackSpeed = new skillStats();
     private final hud EnemyHealth = new hud();
     private final hud PlayerHealth = new hud();
-    public Enemy enemy = new Enemy();
-    public Laserbeam laser = new Laserbeam();
-    public Laserbeam enemyLaser = new Laserbeam();
+    private Enemy enemy = new Enemy();
+    private Laserbeam laser = new Laserbeam();
+    private Laserbeam enemyLaser = new Laserbeam();
     private final ImageIcon Laserbeam_red = new ImageIcon("src/resources/laser_red.png");
     private final ImageIcon Laserbeam_green = new ImageIcon("src/resources/laser_green.png");
     private final ImageIcon PlayerShip = new ImageIcon("src/resources/playership.png");
@@ -57,25 +58,95 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         System.out.println("Player1 has " + player1.getHealth() + " life left");
 
         // Initialize Objects
-        initPlayer();
+       initPlayer();
         initHUD();
         initEnemy();
         initLasers();
         enemyMovement();
         initEnemyLasers();
-
+        //initSkillStats();
+        
         //Player1 listens to (Click-)Actions
         player1.addActionListener(this);
         player1.setFocusable(true);
         enemy.addKeyListener(this);
+        attackSpeed.addActionListener(this);
     }
 
-    // Says what happens when an action is performed
-    @Override
-
-    // MouseAction for Players shot
+    // ActionListener inceases attackSpeed
     public void actionPerformed(ActionEvent e) {
         shoot();
+    }
+
+    // Player Ship
+    private void initPlayer() {
+        //Draw the player's ship
+        getContentPane().add(player1);
+        player1.setLocation(50, 100);
+        player1.setIcon(PlayerShip);
+        player1.setDisabledIcon(PlayerShip);
+        System.out.println("Initialized Player1");
+
+    }
+
+    // Enemy Ship
+    private void initEnemy() {
+        getContentPane().add(enemy);
+        enemy.setLocation(320, 100);
+        enemy.setIcon(EnemyShip);
+        enemy.setDisabledIcon(EnemyShip);
+        System.out.println("Initialized Enemy");
+    }
+
+    // Healthbars for Enemy and Player, Statusbar in lower middle
+    private void initHUD() {
+        getContentPane().add(hud);
+        getContentPane().add(PlayerHealth);
+        getContentPane().add(EnemyHealth);
+
+        hud.setFocusable(false);
+        PlayerHealth.setFocusable(false);
+        EnemyHealth.setFocusable(false);
+
+        hud.setBounds(200, 30, 200, 30);
+        hud.setLocation(110, 450);
+
+        PlayerHealth.setLocation(player1.getX(), player1.getY() - 10);
+        PlayerHealth.setBackground(Color.green);
+
+        EnemyHealth.setLocation(320, enemy.getY() - 10);
+        EnemyHealth.setBackground(Color.green);
+
+        System.out.println("Initialized HUD");
+    }
+
+    private void initSkillStats(){
+        getContentPane().add(attackSpeed);
+        attackSpeed.setLocation(30,400);
+        attackSpeed.setText("AS");
+        attackSpeed.setToolTipText("Increase Attack Speed");
+    }
+    // Players Lasers with Attack Speed 1, start not visible, green laser icon
+    private void initLasers() {
+        getContentPane().add(laser);
+        laser.setLocation(player1.getX(), player1.getY());
+        laser.setEnabled(false);
+        laser.setAttackSpeed(1.0);
+        laser.setVisible(false);
+        laser.setDisabledIcon(Laserbeam_green);
+        System.out.println("Initialized Lasers");
+
+    }
+
+    // Enemy Lasers with Attack Speed1, red icon and start not visible.
+    private void initEnemyLasers() {
+        getContentPane().add(enemyLaser);
+        enemyLaser.setLocation(enemy.getX(), enemy.getY());
+        enemyLaser.setEnabled(false);
+        enemyLaser.setAttackSpeed(1.0);
+        enemyLaser.setDisabledIcon(Laserbeam_red);
+        System.out.println("Initialized Enemy Lasers");
+        enemyShot();
 
     }
 
@@ -214,74 +285,6 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         enemyMove.start();
     }
 
-    // Player Ship
-    private void initPlayer() {
-        //Draw the player's ship
-        getContentPane().add(player1);
-        player1.setLocation(50, 100);
-        player1.setIcon(PlayerShip);
-        player1.setDisabledIcon(PlayerShip);
-        System.out.println("Initialized Player1");
-
-    }
-
-    // Enemy Ship
-    private void initEnemy() {
-        getContentPane().add(enemy);
-        enemy.setLocation(320, 100);
-        enemy.setIcon(EnemyShip);
-        enemy.setDisabledIcon(EnemyShip);
-        System.out.println("Initialized Enemy");
-    }
-
-    // Healthbars for Enemy and Player, Statusbar in lower middle
-    private void initHUD() {
-        getContentPane().add(hud);
-        getContentPane().add(PlayerHealth);
-        getContentPane().add(EnemyHealth);
-
-        hud.setFocusable(false);
-        PlayerHealth.setFocusable(false);
-        EnemyHealth.setFocusable(false);
-
-        hud.setBounds(200, 30, 200, 30);
-        hud.setLocation(110, 450);
-
-        PlayerHealth.setLocation(player1.getX(), player1.getY() - 10);
-        PlayerHealth.setBackground(Color.green);
-
-        EnemyHealth.setLocation(280, enemy.getY() - 10);
-        EnemyHealth.setBackground(Color.green);
-
-        System.out.println("Initialized HUD");
-    }
-
-    // Players Lasers with Attack Speed 1, start not visible, green laser icon
-    private void initLasers() {
-        getContentPane().add(laser);
-        laser.setLocation(player1.getX(), player1.getY());
-        laser.setEnabled(false);
-        laser.setAttackSpeed(1.0);
-        laser.setVisible(false);
-        laser.setDisabledIcon(Laserbeam_green);
-        System.out.println("Initialized Lasers");
-
-    }
-
-    // Enemy Lasers with Attack Speed1, red icon and start not visible.
-    private void initEnemyLasers() {
-        getContentPane().add(enemyLaser);
-        enemyLaser.setLocation(enemy.getX(), enemy.getY());
-        enemyLaser.setEnabled(false);
-        enemyLaser.setAttackSpeed(1.0);
-        enemyLaser.setDisabledIcon(Laserbeam_red);
-        System.out.println("Initialized Enemy Lasers");
-        enemyShot();
-
-    }
-
-    // Enemy Lasershot, will shot while enemy is alive, sets Laser to visble. Laser goes to players position when it's released. 
-    // Afterwards reset to Enemy Position
     private void enemyShot() {
         Thread enemyShot = new Thread() {
             public void run() {
