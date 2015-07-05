@@ -25,11 +25,12 @@ import javax.swing.JRadioButton;
 public class Laserbeam extends JRadioButton {
 
     double x = 0;
-    private final int width = 20;
+    private final int width = 40;
     private final int height = 20;
     int randY = (int) (Math.random() * 40 + 1);
     public double AttackSpeed = 1.0;
     public boolean firstShot = true;
+    public boolean firstShotP2 = true;
     private double enemy = 350;
 
     public Laserbeam() {
@@ -57,6 +58,18 @@ public class Laserbeam extends JRadioButton {
     public void shootEnemyLaser(double enemyX, double EnemyY) {
         enemy = (enemy - 12 * this.AttackSpeed);
         this.setLocation((int) this.enemy, (int) EnemyY);
+    }
+    
+    public void shootPlayer2Laser(double enemyX, double enemyY) {
+        double startingPointX = enemyX;
+        double after;
+        while (firstShotP2) {
+            x = (startingPointX - 12 * this.AttackSpeed);
+            this.setLocation((int) x, (int) enemyY);
+            firstShotP2 = false;
+        }
+        x = (x + 12 * this.AttackSpeed);
+        this.setLocation((int) x, (int) enemyY);
     }
 
     public void sprayY() {
