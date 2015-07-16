@@ -58,14 +58,14 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         System.out.println("Player1 has " + player1.getHealth() + " life left");
 
         // Initialize Objects
-       initPlayer();
+        initPlayer();
         initHUD();
         initEnemy();
         initLasers();
         enemyMovement();
         initEnemyLasers();
         //initSkillStats();
-        
+
         //Player1 listens to (Click-)Actions
         player1.addActionListener(this);
         player1.setFocusable(true);
@@ -120,12 +120,13 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
         System.out.println("Initialized HUD");
     }
 
-    private void initSkillStats(){
+    private void initSkillStats() {
         getContentPane().add(attackSpeed);
-        attackSpeed.setLocation(30,400);
+        attackSpeed.setLocation(30, 400);
         attackSpeed.setText("AS");
         attackSpeed.setToolTipText("Increase Attack Speed");
     }
+
     // Players Lasers with Attack Speed 1, start not visible, green laser icon
     private void initLasers() {
         getContentPane().add(laser);
@@ -202,7 +203,7 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
             hud.setText("Enemy defeated");
             enemyDefeated = true;
             EnemyHealth.setBackground(Color.black);
-            EnemyHealth.setLocation(320, 100);
+            //EnemyHealth.setLocation(320, 100);
             hit = false;
             enemy.setVisible(hit);
 
@@ -252,9 +253,11 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
             }
         }
         if (player1.getHealth() <= 0) {
-            System.out.println("You got defeated");
-            hud.setText("You got defeated");
+            System.out.println("You dieded");
+            hud.setText("You dieded");
+            player1.setAlive(false);
             PlayerHealth.setBackground(Color.black);
+            PlayerHealth.setAlive(false);
             hit = false;
         }
 
@@ -316,33 +319,35 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
     // Players shot, is commenced when Keylistener or Mouselistener activated, stepsToenemy calculates the distance needed to the enemy for hitting.
     private void shoot() {
 
-        // Initialize Lasers with AttackSpeed 1.0
-        // AttackSpeed will be handed over to the Laser and make Steps of 12 multiplied with attackSpeed
-        double stepsToEnemy = (enemy.getX() - player1.getX()) / (12 * laser.getAttackSpeed());
-        laser.setVisible(true);
+        if (player1.isAlive) {
+            // Initialize Lasers with AttackSpeed 1.0
+            // AttackSpeed will be handed over to the Laser and make Steps of 12 multiplied with attackSpeed
+            final double stepsToEnemy = (enemy.getX() - player1.getX()) / (12 * laser.getAttackSpeed());
+            laser.setVisible(true);
 
-        // Position from where the laser will shoot, if commented and Position in for loop set to getY(), Laser will follow when ship is moving
-        // Maybe implement upgrade for aiming later (if clause)
-        double currentPosYPlayer = player1.getY();
+            // Position from where the laser will shoot, if commented and Position in for loop set to getY(), Laser will follow when ship is moving
+            // Maybe implement upgrade for aiming later (if clause)
+            final double currentPosYPlayer = player1.getY();
 
-        Thread moveThread = new Thread() {
-            public void run() {
-                for (int i = 0; i < stepsToEnemy; i++) {
-                    player1.setEnabled(false);
-                    laser.shootLaser(player1.getX(), currentPosYPlayer);
-                    laser.sprayY();
-                    checkHit();
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            Thread moveThread = new Thread() {
+                public void run() {
+                    for (int i = 0; i < stepsToEnemy; i++) {
+                        player1.setEnabled(false);
+                        laser.shootLaser(player1.getX(), currentPosYPlayer);
+                        laser.sprayY();
+                        checkHit();
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
                     }
-
+                    player1.setEnabled(true);
                 }
-                player1.setEnabled(true);
-            }
-        };
-        moveThread.start();
+            };
+            moveThread.start();
+        }
     }
 
     public void keyTyped(KeyEvent e) {
@@ -400,6 +405,7 @@ public class Main extends javax.swing.JFrame implements ActionListener, KeyListe
     private void initComponents() {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

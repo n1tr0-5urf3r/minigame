@@ -59,7 +59,7 @@ public class Laserbeam extends JRadioButton {
         enemy = (enemy - 12 * this.AttackSpeed);
         this.setLocation((int) this.enemy, (int) EnemyY);
     }
-    
+
     public void shootPlayer2Laser(double enemyX, double enemyY) {
         double startingPointX = enemyX;
         double after;

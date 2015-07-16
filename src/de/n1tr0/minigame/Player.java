@@ -27,11 +27,12 @@ public class Player extends JRadioButton {
     public int health;
     private final int width = 70;
     private final int height = 50;
+    private int time = 1;
+    public boolean isAlive = true;
 
     public Player() {
         super();
         init();
-
     }
 
     private void init() {
@@ -48,20 +49,36 @@ public class Player extends JRadioButton {
         return this.health;
     }
 
+    public void setAlive(boolean isAlive) {
+        this.isAlive = isAlive;
+    }
+
+    public boolean isAlive() {
+        return this.isAlive;
+    }
+
     public void moveRight() {
-        this.setLocation(this.getX() + 20, this.getY());
+        if (isAlive) {
+            this.setLocation(this.getX() + 20, this.getY());
+        }
     }
 
     public void moveLeft() {
-        this.setLocation(this.getX() - 20, this.getY());
+        if (isAlive) {
+            this.setLocation(this.getX() - 20, this.getY());
+        }
     }
 
     public void moveUp() {
-        this.setLocation(this.getX(), this.getY() - 10);
+        if (isAlive) {
+            this.setLocation(this.getX(), this.getY() - 10);
+        }
     }
 
     public void moveDown() {
-        this.setLocation(this.getX(), this.getY() + 10);
+        if (isAlive) {
+            this.setLocation(this.getX(), this.getY() + 10);
+        }
     }
 
 }

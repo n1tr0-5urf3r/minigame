@@ -27,6 +27,7 @@ public class hud extends JTextArea {
     private final int width = 70;
     private final int height = 10;
     private double PosY = this.getY();
+    public boolean isAlive = true;
 
     public hud() {
         super();
@@ -37,28 +38,49 @@ public class hud extends JTextArea {
         this.setBounds(width, height, width, height);
     }
 
+    public void setAlive(boolean isAlive) {
+        this.isAlive = isAlive;
+    }
+
+    public boolean isAlive() {
+        return this.isAlive;
+    }
+
     public void moveUp() {
-        this.setLocation(this.getX(), this.getY() - 10);
+        if (isAlive) {
+            this.setLocation(this.getX(), this.getY() - 10);
+        }
     }
 
     public void moveDown() {
-        this.setLocation(this.getX(), this.getY() + 10);
+        if (isAlive) {
+            this.setLocation(this.getX(), this.getY() + 10);
+        }
     }
 
     public void moveBot() {
-        PosY = PosY + 0.000003;
-        this.setLocation(this.getX(), (int) PosY);
+        if (isAlive) {
+            PosY = PosY + 0.000003;
+            this.setLocation(this.getX(), (int) PosY);
+        }
     }
 
     public void moveTop() {
-        PosY = PosY - 0.000003;
-        this.setLocation(this.getX(), (int) PosY);
+        if (isAlive) {
+            PosY = PosY - 0.000003;
+            this.setLocation(this.getX(), (int) PosY);
+        }
     }
-        public void moveRight() {
-        this.setLocation(this.getX() + 20, this.getY());
+
+    public void moveRight() {
+        if (isAlive) {
+            this.setLocation(this.getX() + 20, this.getY());
+        }
     }
 
     public void moveLeft() {
-        this.setLocation(this.getX() - 20, this.getY());
+        if (isAlive) {
+            this.setLocation(this.getX() - 20, this.getY());
+        }
     }
 }
